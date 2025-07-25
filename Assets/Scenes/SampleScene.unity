@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   width: 6
-  height: 12
+  height: 10
   tileObject: {fileID: 7546894464204585095, guid: 8cad87f5d6852ba469e8b940c32b6a5d, type: 3}
   cameraSizeOffset: 0
   cameraVerticalOffset: 0

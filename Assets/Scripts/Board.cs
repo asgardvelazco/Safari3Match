@@ -33,6 +33,7 @@ public class Board : MonoBehaviour
         Camera.main.orthographicSize = horizontal > vertical ? horizontal + cameraSizeOffset : vertical + cameraSizeOffset;
 
     }
+
     private void SetupBoard()
     {
         for (int x = 0; x < width; x++)
@@ -41,6 +42,7 @@ public class Board : MonoBehaviour
             {
                 var o = Instantiate(tileObject, new Vector3(x, y, -5), Quaternion.identity);
                 o.transform.parent = transform;
+                o.GetComponent<Tile>()?.Setup(x, y, this);
             }
         }
     }
