@@ -22,6 +22,8 @@ public class Board : MonoBehaviour
     Tile startTile;
     Tile endTile;
 
+    bool swappingPieces = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -91,13 +93,11 @@ public class Board : MonoBehaviour
     {
         if (startTile != null && endTile != null && IsCloseTo(startTile, endTile))
         {
-            SwapTiles();
+            StartCoroutine(SwapTiles());
         }
-        startTile = null;
-        endTile = null;
     }
 
-    private void SwapTiles()
+    IEnumerator SwapTiles()
     {
         var StarPiece = Pieces[startTile.x, startTile.y];
         var EndPiece = Pieces[endTile.x, endTile.y];
@@ -107,6 +107,40 @@ public class Board : MonoBehaviour
 
         Pieces[startTile.x, startTile.y] = EndPiece;
         Pieces[endTile.x, endTile.y] = StarPiece;
+
+        yield return new WaitForSeconds(0.6f);
+
+        bool foundMatch = false;
+        var startMatches = GetMatchByPiece(startTile.x, startTile.y, 3);
+        var endMatches = GetMatchByPiece(endTile.x, endTile.y, 3);
+
+        startMatches.ForEach(piece =>
+        {
+            foundMatch = true;
+            Pieces[piece.x, piece.y] = null;
+            Destroy(piece.gameObject);
+        });
+
+        endMatches.ForEach(piece =>
+        {
+            foundMatch = true;
+            Pieces[piece.x, piece.y] = null;
+            Destroy(piece.gameObject);
+        });
+
+        if (!foundMatch)
+        {
+            StarPiece.Move(startTile.x, startTile.y);
+            EndPiece.Move(endTile.x, endTile.y);
+            Pieces[startTile.x, startTile.y] = StarPiece;
+            Pieces[endTile.x, endTile.y] = EndPiece;
+        }
+
+        startTile = null;
+        endTile = null;
+        swappingPieces = false;
+
+        yield return null;
     }
 
     public bool IsCloseTo(Tile start, Tile end)
@@ -120,6 +154,71 @@ public class Board : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public List<Piece> GetMatchByDirection(int xpos, int ypos, Vector2 direction, int minPieces = 3)
+    {
+        List<Piece> matches = new List<Piece>();
+        Piece startPiece = Pieces[xpos, ypos];
+        matches.Add(startPiece);
+
+        int nextX;
+        int nextY;
+        int maxVal = width > height ? width : height;
+
+        for (int i = 1; i < maxVal; i++)
+        {
+            nextX = xpos + ((int)direction.x * i);
+            nextY = ypos + ((int)direction.y * i);
+            if (nextX >= 0 && nextX < width && nextY >= 0 && nextY < height)
+            {
+                var nextPiece = Pieces[nextX, nextY];
+                if (nextPiece != null && nextPiece.pieceType == startPiece.pieceType)
+                {
+                    matches.Add(nextPiece);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        if (matches.Count >= minPieces)
+        {
+            return matches;
+        }
+
+        return null;
+    }
+
+    public List<Piece> GetMatchByPiece(int xpos, int ypos, int minPieces = 3)
+    {
+        var upMatchs = GetMatchByDirection(xpos, ypos, new Vector2(0, 1), 2);
+        var downMatchs = GetMatchByDirection(xpos, ypos, new Vector2(0, -1), 2);
+        var rightMatchs = GetMatchByDirection(xpos, ypos, new Vector2(1, 0), 2);
+        var leftMatchs = GetMatchByDirection(xpos, ypos, new Vector2(-1, 0), 2);
+
+        if (upMatchs == null) upMatchs = new List<Piece>();
+        if (downMatchs == null) downMatchs = new List<Piece>();
+        if (rightMatchs == null) rightMatchs = new List<Piece>();
+        if (leftMatchs == null) leftMatchs = new List<Piece>();
+
+        var verticalMatches = upMatchs.Union(downMatchs).ToList();
+        var horizontalMatches = leftMatchs.Union(rightMatchs).ToList();
+
+        var foundMatches = new List<Piece>();
+
+        if (verticalMatches.Count >= minPieces)
+        {
+            foundMatches = foundMatches.Union(verticalMatches).ToList();
+        }
+        if (horizontalMatches.Count >= minPieces)
+        {
+            foundMatches = foundMatches.Union(horizontalMatches).ToList();
+        }
+
+        return foundMatches;
     }
 }
 
