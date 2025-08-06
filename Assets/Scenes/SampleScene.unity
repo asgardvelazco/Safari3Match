@@ -380,11 +380,6 @@ MonoBehaviour:
   - {fileID: 5807255818985066143, guid: b4f9f06f8f717894289f9ed0479c7da1, type: 3}
   - {fileID: 8073128569446302094, guid: f0e0afc0def10ae499a64f2caa81a8fb, type: 3}
   - {fileID: 3910851730323519864, guid: bd917b18cabe7a54c98dde1ac2c86a47, type: 3}
-  - {fileID: 5467098496180807477, guid: 2e61a350cc775a544aa463e011eebe59, type: 3}
-  - {fileID: 4360712823902141336, guid: 2e0c0e06d4a63af43aabd4bd8533688f, type: 3}
-  - {fileID: 40769390883648662, guid: 25a098f1bc7c69544befe48ce56b4740, type: 3}
-  - {fileID: 3997387288223465898, guid: 75580eb0196edff4993c0398e6446d80, type: 3}
-  - {fileID: 7958887752597686155, guid: 61c5b5cad2ffc5d4f9677f45e86fc7c7, type: 3}
 --- !u!4 &1893959815
 Transform:
   m_ObjectHideFlags: 0
