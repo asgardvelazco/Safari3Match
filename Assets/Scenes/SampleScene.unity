@@ -598,6 +598,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85620875d2501e147bbbecfc3818852a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeToMatch: 10
+  currentTimeToMatch: 0
+  gameState: 1
   Points: 0
   OnPointsUpdated:
     m_PersistentCalls:
