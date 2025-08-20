@@ -15,6 +15,8 @@ public class Board : MonoBehaviour
     public float cameraSizeOffset;
     public float cameraVerticalOffset;
 
+    public int PointsPerMatch;
+
     public GameObject[] availablePieces;
 
     Tile[,] Tiles;
@@ -76,7 +78,7 @@ public class Board : MonoBehaviour
     private Piece CreatePieceAt(int x, int y)
     {
         var selectedPiece = availablePieces[UnityEngine.Random.Range(0, availablePieces.Length)];
-        var o = Instantiate(selectedPiece, new Vector3(x, y + 1, -5), Quaternion.identity);
+        var o = Instantiate(selectedPiece, new Vector3(x, y+1, -5), Quaternion.identity);
         o.transform.parent = transform;
         Pieces[x, y] = o.GetComponent<Piece>();
         Pieces[x, y].Setup(x, y, this);
@@ -160,7 +162,7 @@ public class Board : MonoBehaviour
         var allMatches = startMatches.Union(endMatches).ToList();
 
 
-        if (allMatches.Count == 0)
+        if (allMatches.Count==0)
         {
             StarPiece.Move(startTile.x, startTile.y);
             EndPiece.Move(endTile.x, endTile.y);
@@ -170,6 +172,7 @@ public class Board : MonoBehaviour
         else
         {
             ClearPieces(allMatches);
+            AwardPoints(allMatches);
         }
 
         startTile = null;
@@ -186,7 +189,7 @@ public class Board : MonoBehaviour
             ClearPieceAt(piece.x, piece.y);
         });
         List<int> columns = GetColumns(piecesToClear);
-        List<Piece> collapsedPieces = collapseColumns(columns, 0.3f);
+        List<Piece> collapsedPieces =  collapseColumns(columns, 0.3f);
         FindMatchsRecursively(collapsedPieces);
     }
 
@@ -206,6 +209,7 @@ public class Board : MonoBehaviour
             {
                 newMatches = newMatches.Union(matches).ToList();
                 ClearPieces(matches);
+                AwardPoints(matches);
             }
         });
         if (newMatches.Count > 0)
@@ -244,17 +248,17 @@ public class Board : MonoBehaviour
         for (int i = 0; i < columns.Count; i++)
         {
             var column = columns[i];
-            for (int y = 0; y < height; y++)
+            for(int y = 0; y < height; y++)
             {
-                if (Pieces[column, y] == null)
+                if(Pieces[column, y] == null)
                 {
-                    for (int yplus = y + 1; yplus < height; yplus++)
+                    for(int yplus = y +1; yplus<height; yplus++)
                     {
                         if (Pieces[column, yplus] != null)
                         {
                             Pieces[column, yplus].Move(column, y);
                             Pieces[column, y] = Pieces[column, yplus];
-                            if (!movingPieces.Contains(Pieces[column, y]))
+                            if(!movingPieces.Contains(Pieces[column, y]))
                             {
                                 movingPieces.Add(Pieces[column, y]);
                             }
@@ -357,6 +361,11 @@ public class Board : MonoBehaviour
         }
 
         return foundMatches;
+    }
+
+    public void AwardPoints(List<Piece> allMatches)
+    {
+        GameManager.Instance.AddPoints(allMatches.Count * PointsPerMatch);
     }
 
 }
