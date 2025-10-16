@@ -6,21 +6,27 @@ using UnityEngine;
 public class HideObjectOnGameState : MonoBehaviour
 {
     public GameObject target;
-    public GameManager.GameState hideOnstate;
+    public GameManager.GameState showOnstate;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (hideOnstate == GameManager.Instance.gameState)
+        target.SetActive(showOnstate == GameManager.Instance.gameState);
+/*      La línea anterior elimina la necesidad del if/else
+        if (showOnstate == GameManager.Instance.gameState)
+        {
+            target.SetActive(true);
+        }
+        else
         {
             target.SetActive(false);
-        }
-        GameManager.Instance.OnGameStateUpdated.AddListener(GameStateUpdated);
+        }*/
+            GameManager.Instance.OnGameStateUpdated.AddListener(GameStateUpdated);
     }
 
     private void GameStateUpdated(GameManager.GameState newState)
     {
-        target.SetActive(hideOnstate != newState);
+        target.SetActive(showOnstate == GameManager.Instance.gameState);
     }
 
 }
